@@ -1,0 +1,53 @@
+{
+  "model_type": "K-Means Clustering",
+  "n_clusters": 3,
+  "n_users": 2722,
+  "created_at": "2025-11-05T23:29:57.256565",
+  "segment_profiles": [
+    {
+      "cluster_id": 0,
+      "size": 1529,
+      "percentage": 56.17193240264511,
+      "avg_total_sessions": 91.40026160889471,
+      "avg_session_duration": 211.65682862403713,
+      "avg_engagement_score": 59.186468220383425,
+      "avg_article_views": 8.953123198395144,
+      "newsletter_signup_rate": 0.27403531720078483,
+      "avg_content_diversity": 4.805084711851413,
+      "preferred_brand": "N/A",
+      "primary_country": "N/A",
+      "primary_device": "N/A",
+      "subscription_tier": "N/A"
+    },
+    {
+      "cluster_id": 1,
+      "size": 1192,
+      "percentage": 43.791329904482,
+      "avg_total_sessions": 95.29110738255034,
+      "avg_session_duration": 68.58318736981684,
+      "avg_engagement_score": 22.609531326764714,
+      "avg_article_views": 3.1285092754864934,
+      "newsletter_signup_rate": 0.08473154362416108,
+      "avg_content_diversity": 3.0802555985867195,
+      "preferred_brand": "N/A",
+      "primary_country": "N/A",
+      "primary_device": "N/A",
+      "subscription_tier": "N/A"
+    },
+    {
+      "cluster_id": 2,
+      "size": 1,
+      "percentage": 0.03673769287288758,
+      "avg_total_sessions": 100.0,
+      "avg_session_duration": 217.0,
+      "avg_engagement_score": 53.0,
+      "avg_article_views": 11.0,
+      "newsletter_signup_rate": 0.0,
+      "avg_content_diversity": 5.0,
+      "preferred_brand": "N/A",
+      "primary_country": "N/A",
+      "primary_device": "N/A",
+      "subscription_tier": "N/A"
+    }
+  ]
+}

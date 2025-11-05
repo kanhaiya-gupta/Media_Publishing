@@ -1,0 +1,25 @@
+{
+  "model_type": "XGBoost",
+  "task": "Binary Classification",
+  "target": "churned",
+  "features": 59,
+  "training_date": "2025-11-05T23:29:38.631656",
+  "metrics": {
+    "accuracy": 0.9963302752293578,
+    "precision": 0.9959839357429718,
+    "recall": 0.9959839357429718,
+    "f1": 0.9959839357429718,
+    "auc": 0.9983040269184847,
+    "confusion_matrix": [
+      [
+        295,
+        1
+      ],
+      [
+        1,
+        248
+      ]
+    ],
+    "timestamp": "2025-11-05T23:29:38.626282"
+  }
+}

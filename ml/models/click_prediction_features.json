@@ -1,0 +1,23 @@
+[
+  "article_views",
+  "session_duration_sec",
+  "total_events",
+  "pages_visited_count",
+  "hour",
+  "day_of_week",
+  "is_weekend",
+  "user_avg_clicks",
+  "user_total_clicks",
+  "user_interactions",
+  "user_avg_views",
+  "user_total_views",
+  "user_avg_duration",
+  "user_avg_events",
+  "article_avg_clicks",
+  "article_total_clicks",
+  "article_interactions",
+  "article_avg_views",
+  "article_total_views",
+  "user_ctr",
+  "article_ctr"
+]

@@ -1,0 +1,8 @@
+{
+  "model_type": "Hybrid Recommendation System",
+  "components": [
+    "Collaborative Filtering (NMF)",
+    "Content-Based Filtering"
+  ],
+  "created_at": "2025-11-05T23:30:00.810579"
+}
