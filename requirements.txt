@@ -1,0 +1,47 @@
+# Core Dependencies
+kafka-python>=2.2.15
+pyspark>=3.4.1  # Installed version: 3.4.1
+clickhouse-driver>=0.2.9
+minio>=7.2.18
+python-snappy>=0.7.3
+
+# Delta Lake (Critical for data lake operations)
+delta-spark>=2.4.0  # Installed version: 2.4.0 (compatible with Spark 3.4.1)
+
+# Data Processing
+pandas>=2.3.3
+numpy>=2.3.4
+scipy>=1.16.3  # Used in ad_optimization.py
+
+# ML Libraries (Core - used across pipeline)
+scikit-learn>=1.7.2
+xgboost>=3.1.1
+lightgbm>=4.6.0
+
+# Visualization
+matplotlib>=3.10.7
+seaborn>=0.13.2
+
+# Testing
+pytest>=8.4.2
+pytest-cov>=7.0.0
+pytest-mock>=3.11.1
+
+# Code Quality
+black>=25.9.0
+isort>=7.0.0
+flake8>=7.3.0
+pylint>=4.0.2
+mypy>=1.7.0
+bandit>=1.8.6
+
+# Code Metrics
+radon>=6.0.1
+mccabe>=0.7.0
+
+# Pre-commit hooks
+pre-commit>=3.0.0
+
+# Note: Additional ML dependencies (TensorFlow, Keras, MLflow, etc.)
+# are available in ml/requirements_ml.txt for advanced ML workflows
+
