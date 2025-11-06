@@ -14,16 +14,31 @@ Company: Media Publishing
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import avg as spark_avg
-from pyspark.sql.functions import (col, collect_list, count, expr, first,
-                                   from_json, from_unixtime, lit)
+from pyspark.sql.functions import (
+    col,
+    collect_list,
+    count,
+    expr,
+    first,
+    from_json,
+    from_unixtime,
+    lit,
+)
 from pyspark.sql.functions import max as spark_max
 from pyspark.sql.functions import min as spark_min
 from pyspark.sql.functions import struct
 from pyspark.sql.functions import sum as spark_sum
 from pyspark.sql.functions import to_json, when
-from pyspark.sql.types import (ArrayType, IntegerType, LongType, MapType,
-                               StringType, StructField, StructType,
-                               TimestampType)
+from pyspark.sql.types import (
+    ArrayType,
+    IntegerType,
+    LongType,
+    MapType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
+)
 
 # Create SparkSession with Kafka connector, S3/MinIO, and Delta Lake support
 # Note: ClickHouse writes use clickhouse-driver (Python library), not JDBC

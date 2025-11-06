@@ -101,7 +101,7 @@ jobs:
         image: clickhouse/clickhouse-server:latest
         ports:
           - "8123:8123"
-          - "9000:9000"
+          - "9002:9000"  # Native protocol (mapped to 9002 to avoid conflict with MinIO)
         env:
           CLICKHOUSE_DB: analytics
           CLICKHOUSE_USER: default
@@ -110,12 +110,13 @@ jobs:
       minio:
         image: minio/minio:latest
         ports:
-          - "9000:9000"
-          - "9001:9001"
+          - "9000:9000"  # API port
+          - "9001:9001"  # Console port
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        # Note: MinIO command is set via entrypoint in the image
+        # Note: MinIO image has default entrypoint that starts server
+        # For full control, use docker-compose.yml locally
 
     steps:
       - name: Checkout code
@@ -136,7 +137,7 @@ jobs:
       - name: Wait for services
         run: |
           sleep 30
-          python test_clickhouse_connection.py || exit 1
+          python scripts/test_clickhouse_connection.py || exit 1
 
       - name: Run integration tests
         run: |
@@ -150,7 +151,7 @@ jobs:
         image: clickhouse/clickhouse-server:latest
         ports:
           - "8123:8123"
-          - "9000:9000"
+          - "9002:9000"  # Native protocol (consistent with integration-tests)
         env:
           CLICKHOUSE_DB: analytics
           CLICKHOUSE_USER: default
