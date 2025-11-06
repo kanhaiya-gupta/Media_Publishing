@@ -85,7 +85,7 @@ jobs:
         image: confluentinc/cp-kafka:latest
         ports:
           - "9092:9092"
-        environment:
+        env:
           KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
           KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -94,7 +94,7 @@ jobs:
         image: confluentinc/cp-zookeeper:latest
         ports:
           - "2181:2181"
-        environment:
+        env:
           ZOOKEEPER_CLIENT_PORT: 2181
 
       clickhouse:
@@ -102,7 +102,7 @@ jobs:
         ports:
           - "8123:8123"
           - "9000:9000"
-        environment:
+        env:
           CLICKHOUSE_DB: analytics
           CLICKHOUSE_USER: default
           CLICKHOUSE_PASSWORD: clickhouse
@@ -112,10 +112,10 @@ jobs:
         ports:
           - "9000:9000"
           - "9001:9001"
-        environment:
+        env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        command: server /data --console-address ":9001"
+        # Note: MinIO command is set via entrypoint in the image
 
     steps:
       - name: Checkout code
@@ -151,7 +151,7 @@ jobs:
         ports:
           - "8123:8123"
           - "9000:9000"
-        environment:
+        env:
           CLICKHOUSE_DB: analytics
           CLICKHOUSE_USER: default
           CLICKHOUSE_PASSWORD: clickhouse

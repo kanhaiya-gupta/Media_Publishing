@@ -1,4 +1,4 @@
-.PHONY: help setup test lint format clean docker-up docker-down docker-logs spark-streaming kafka-producer ml-pipeline
+.PHONY: help setup test lint format clean docker-up docker-down docker-logs spark-streaming kafka-producer ml-pipeline validate-workflows
 
 # Default target
 help:
@@ -15,6 +15,7 @@ help:
 	@echo "  make kafka-producer - Run Kafka producer"
 	@echo "  make spark-streaming - Run Spark streaming job"
 	@echo "  make ml-pipeline    - Run complete ML pipeline"
+	@echo "  make validate-workflows - Validate GitHub Actions workflows locally"
 	@echo "  make clean          - Clean temporary files"
 
 # Setup environment
@@ -121,4 +122,10 @@ health-check:
 	@docker-compose ps | grep -q "Up" || (echo "✗ Services not running" && exit 1)
 	@python test_clickhouse_connection.py || (echo "✗ ClickHouse not accessible" && exit 1)
 	@echo "✓ All services healthy"
+
+# Validate GitHub Actions workflows locally
+validate-workflows:
+	@echo "Validating GitHub Actions workflows..."
+	@python validate_workflows.py
+	@echo "✓ Workflow validation complete"
 

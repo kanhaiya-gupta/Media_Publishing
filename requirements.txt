@@ -42,6 +42,9 @@ mccabe>=0.7.0
 # Pre-commit hooks
 pre-commit>=3.0.0
 
+# Workflow validation
+pyyaml>=6.0
+
 # Note: Additional ML dependencies (TensorFlow, Keras, MLflow, etc.)
 # are available in ml/requirements_ml.txt for advanced ML workflows
 
