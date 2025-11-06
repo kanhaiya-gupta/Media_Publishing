@@ -106,9 +106,7 @@ def find_optimal_clusters(X, max_clusters=10):
     pca = PCA(n_components=0.95)  # Keep 95% variance
     X_pca = pca.fit_transform(X_scaled)
 
-    print(
-        f"PCA Components: {pca.n_components_} (explains {pca.explained_variance_ratio_.sum()*100:.2f}% variance)"
-    )
+    print(f"PCA Components: {pca.n_components_} (explains {pca.explained_variance_ratio_.sum()*100:.2f}% variance)")
 
     inertias = []
     silhouette_scores = []
@@ -140,9 +138,7 @@ def find_optimal_clusters(X, max_clusters=10):
 
     # Elbow curve
     axes[0].plot(k_range, inertias, "bo-")
-    axes[0].axvline(
-        x=optimal_k, color="r", linestyle="--", label=f"Optimal k={optimal_k}"
-    )
+    axes[0].axvline(x=optimal_k, color="r", linestyle="--", label=f"Optimal k={optimal_k}")
     axes[0].set_xlabel("Number of Clusters (k)")
     axes[0].set_ylabel("Inertia")
     axes[0].set_title("Elbow Method")
@@ -151,9 +147,7 @@ def find_optimal_clusters(X, max_clusters=10):
 
     # Silhouette scores
     axes[1].plot(k_range, silhouette_scores, "go-")
-    axes[1].axvline(
-        x=optimal_k, color="r", linestyle="--", label=f"Optimal k={optimal_k}"
-    )
+    axes[1].axvline(x=optimal_k, color="r", linestyle="--", label=f"Optimal k={optimal_k}")
     axes[1].set_xlabel("Number of Clusters (k)")
     axes[1].set_ylabel("Silhouette Score")
     axes[1].set_title("Silhouette Score")
@@ -162,9 +156,7 @@ def find_optimal_clusters(X, max_clusters=10):
 
     # Davies-Bouldin scores
     axes[2].plot(k_range, davies_bouldin_scores, "mo-")
-    axes[2].axvline(
-        x=optimal_k, color="r", linestyle="--", label=f"Optimal k={optimal_k}"
-    )
+    axes[2].axvline(x=optimal_k, color="r", linestyle="--", label=f"Optimal k={optimal_k}")
     axes[2].set_xlabel("Number of Clusters (k)")
     axes[2].set_ylabel("Davies-Bouldin Score")
     axes[2].set_title("Davies-Bouldin Score (lower is better)")
@@ -235,23 +227,15 @@ def analyze_segments(df, labels, feature_list):
             ).mean(),
             "avg_article_views": cluster_data["avg_article_views"].mean(),
             "newsletter_signup_rate": cluster_data["has_newsletter"].mean(),
-            "avg_content_diversity": cluster_data.get(
-                "content_diversity_score", 0
-            ).mean(),
+            "avg_content_diversity": cluster_data.get("content_diversity_score", 0).mean(),
             "preferred_brand": (
-                cluster_data["preferred_brand"].mode()[0]
-                if "preferred_brand" in cluster_data.columns
-                else "N/A"
+                cluster_data["preferred_brand"].mode()[0] if "preferred_brand" in cluster_data.columns else "N/A"
             ),
             "primary_country": (
-                cluster_data["primary_country"].mode()[0]
-                if "primary_country" in cluster_data.columns
-                else "N/A"
+                cluster_data["primary_country"].mode()[0] if "primary_country" in cluster_data.columns else "N/A"
             ),
             "primary_device": (
-                cluster_data["primary_device"].mode()[0]
-                if "primary_device" in cluster_data.columns
-                else "N/A"
+                cluster_data["primary_device"].mode()[0] if "primary_device" in cluster_data.columns else "N/A"
             ),
             "subscription_tier": (
                 cluster_data["current_subscription_tier"].mode()[0]
@@ -284,19 +268,13 @@ def visualize_segments(df, labels, pca, kmeans, scaler, clustering_features):
     print("=" * 80)
 
     # Get PCA components for visualization
-    X_pca_2d = pca.transform(
-        scaler.transform(
-            df[[f for f in clustering_features if f in df.columns]].fillna(0)
-        )
-    )[:, :2]
+    X_pca_2d = pca.transform(scaler.transform(df[[f for f in clustering_features if f in df.columns]].fillna(0)))[:, :2]
 
     # Create visualization
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
 
     # PCA scatter plot
-    scatter = axes[0, 0].scatter(
-        X_pca_2d[:, 0], X_pca_2d[:, 1], c=labels, cmap="viridis", alpha=0.6
-    )
+    scatter = axes[0, 0].scatter(X_pca_2d[:, 0], X_pca_2d[:, 1], c=labels, cmap="viridis", alpha=0.6)
     axes[0, 0].set_xlabel(f"PC1 ({pca.explained_variance_ratio_[0]*100:.2f}% variance)")
     axes[0, 0].set_ylabel(f"PC2 ({pca.explained_variance_ratio_[1]*100:.2f}% variance)")
     axes[0, 0].set_title("User Segments (PCA Visualization)")
@@ -350,10 +328,7 @@ def save_segments(df, segment_profiles, kmeans, scaler, pca):
 
     # Save user segments
     output_file = SCRIPT_DIR / "user_segments.csv"
-    df[
-        ["user_id", "segment"]
-        + [f for f in df.columns if f not in ["user_id", "segment"]]
-    ].to_csv(output_file, index=False)
+    df[["user_id", "segment"] + [f for f in df.columns if f not in ["user_id", "segment"]]].to_csv(output_file, index=False)
     print(f"✓ Saved user segments to {output_file}")
 
     # Save segment profiles
@@ -418,14 +393,10 @@ def main():
         df_with_segments["segment"] = labels
 
         # Analyze segments
-        segment_profiles = analyze_segments(
-            df_with_segments.copy(), labels, feature_list
-        )
+        segment_profiles = analyze_segments(df_with_segments.copy(), labels, feature_list)
 
         # Visualize segments
-        visualize_segments(
-            df_with_segments.copy(), labels, pca, kmeans, scaler, clustering_features
-        )
+        visualize_segments(df_with_segments.copy(), labels, pca, kmeans, scaler, clustering_features)
 
         # Save results
         save_segments(df_with_segments.copy(), segment_profiles, kmeans, scaler, pca)

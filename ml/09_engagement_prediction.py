@@ -161,9 +161,7 @@ def create_engagement_features(df):
         .reset_index()
     )
 
-    user_stats.columns = ["user_id"] + [
-        f"user_{col[0]}_{col[1]}" for col in user_stats.columns[1:]
-    ]
+    user_stats.columns = ["user_id"] + [f"user_{col[0]}_{col[1]}" for col in user_stats.columns[1:]]
     df = df.merge(user_stats, on="user_id", how="left")
 
     # Content features
@@ -179,24 +177,16 @@ def create_engagement_features(df):
         .reset_index()
     )
 
-    article_stats.columns = ["article_id"] + [
-        f"article_{col[0]}_{col[1]}" for col in article_stats.columns[1:]
-    ]
+    article_stats.columns = ["article_id"] + [f"article_{col[0]}_{col[1]}" for col in article_stats.columns[1:]]
     df = df.merge(article_stats, on="article_id", how="left")
 
     # Brand features
-    brand_stats = (
-        df.groupby("brand")
-        .agg({"engagement_score": "mean", "session_duration_sec": "mean"})
-        .reset_index()
-    )
+    brand_stats = df.groupby("brand").agg({"engagement_score": "mean", "session_duration_sec": "mean"}).reset_index()
     brand_stats.columns = ["brand", "brand_avg_engagement", "brand_avg_duration"]
     df = df.merge(brand_stats, on="brand", how="left")
 
     # Category features
-    category_stats = (
-        df.groupby("category").agg({"engagement_score": "mean"}).reset_index()
-    )
+    category_stats = df.groupby("category").agg({"engagement_score": "mean"}).reset_index()
     category_stats.columns = ["category", "category_avg_engagement"]
     df = df.merge(category_stats, on="category", how="left")
 
@@ -251,9 +241,7 @@ def prepare_engagement_features(df):
     available_categorical = [f for f in categorical_features if f in df.columns]
 
     # One-hot encode categorical features
-    df_encoded = pd.get_dummies(
-        df, columns=available_categorical, prefix=available_categorical
-    )
+    df_encoded = pd.get_dummies(df, columns=available_categorical, prefix=available_categorical)
 
     # Select all feature columns (exclude non-feature columns)
     exclude_cols = [
@@ -364,9 +352,7 @@ def evaluate_model(model, X_test, y_test, feature_columns):
 
     # Feature importance
     feature_importance = model.get_score(importance_type="gain")
-    sorted_features = sorted(
-        feature_importance.items(), key=lambda x: x[1], reverse=True
-    )
+    sorted_features = sorted(feature_importance.items(), key=lambda x: x[1], reverse=True)
 
     print(f"\nTop 20 Most Important Features:")
     for i, (feature, importance) in enumerate(sorted_features[:20], 1):
@@ -453,9 +439,7 @@ def main():
         X, y, feature_columns = prepare_engagement_features(df)
 
         # Split data
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         print(f"\nTrain/Test Split:")
         print(f"  Training: {len(X_train):,} samples")

@@ -115,9 +115,7 @@ def load_ad_data(client, limit=100000):
     df = pd.DataFrame(results, columns=columns)
 
     # Simulate ad revenue (in real scenario, this would come from ad server)
-    df["revenue"] = df["ad_clicks"] * np.random.uniform(
-        0.1, 2.0, len(df)
-    )  # Simulated revenue per click
+    df["revenue"] = df["ad_clicks"] * np.random.uniform(0.1, 2.0, len(df))  # Simulated revenue per click
 
     print(f"✓ Loaded {len(df):,} ad interactions")
     print(f"  Ad Click Rate: {df['clicked_ad'].mean()*100:.2f}%")
@@ -153,16 +151,12 @@ def create_ad_features(df):
         .reset_index()
     )
 
-    user_stats.columns = ["user_id"] + [
-        f"user_{col[0]}_{col[1]}" for col in user_stats.columns[1:]
-    ]
+    user_stats.columns = ["user_id"] + [f"user_{col[0]}_{col[1]}" for col in user_stats.columns[1:]]
     df = df.merge(user_stats, on="user_id", how="left")
 
     # Content features
     article_stats = (
-        df.groupby("article_id")
-        .agg({"ad_clicks": "mean", "revenue": "mean", "article_views": "mean"})
-        .reset_index()
+        df.groupby("article_id").agg({"ad_clicks": "mean", "revenue": "mean", "article_views": "mean"}).reset_index()
     )
 
     article_stats.columns = [
@@ -174,9 +168,7 @@ def create_ad_features(df):
     df = df.merge(article_stats, on="article_id", how="left")
 
     # Brand features
-    brand_stats = (
-        df.groupby("brand").agg({"revenue": "mean", "ad_clicks": "mean"}).reset_index()
-    )
+    brand_stats = df.groupby("brand").agg({"revenue": "mean", "ad_clicks": "mean"}).reset_index()
     brand_stats.columns = ["brand", "brand_avg_revenue", "brand_avg_ad_clicks"]
     df = df.merge(brand_stats, on="brand", how="left")
 
@@ -229,9 +221,7 @@ class ThompsonSampling:
 
     def select_arm(self):
         """Select arm using Thompson Sampling"""
-        samples = [
-            np.random.beta(self.alpha[i], self.beta[i]) for i in range(self.n_arms)
-        ]
+        samples = [np.random.beta(self.alpha[i], self.beta[i]) for i in range(self.n_arms)]
         return np.argmax(samples)
 
     def update(self, arm, reward):
@@ -293,9 +283,7 @@ def simulate_ad_placement_optimization(df, n_arms=5):
         # Simulate reward (revenue based on user features)
         # In real scenario, this would be actual ad revenue
         base_revenue = row["revenue"]
-        placement_multiplier = [0.8, 1.0, 1.2, 0.9, 1.1][
-            arm
-        ]  # Different placement effectiveness
+        placement_multiplier = [0.8, 1.0, 1.2, 0.9, 1.1][arm]  # Different placement effectiveness
         reward = base_revenue * placement_multiplier
 
         # Update Thompson Sampling
@@ -447,13 +435,9 @@ def main():
             "subscription_tier",
         ]
         available_categorical = [f for f in categorical_features if f in df.columns]
-        df_encoded = pd.get_dummies(
-            df, columns=available_categorical, prefix=available_categorical
-        )
+        df_encoded = pd.get_dummies(df, columns=available_categorical, prefix=available_categorical)
 
-        all_features = available_features + [
-            col for col in df_encoded.columns if col not in df.columns
-        ]
+        all_features = available_features + [col for col in df_encoded.columns if col not in df.columns]
         all_features = [
             f
             for f in all_features
@@ -473,9 +457,7 @@ def main():
         y = df_encoded["revenue"]
 
         # Train revenue prediction model
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.2, random_state=42
-        )
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         revenue_model = train_revenue_prediction_model(X_train, y_train, X_test, y_test)
 
         # Simulate ad placement optimization

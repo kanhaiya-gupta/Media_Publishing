@@ -86,9 +86,7 @@ def load_user_article_interactions(client, limit=100000):
             sample_results = client.execute(sample_query)
             if len(sample_results) > 0:
                 sample = sample_results[0][0]
-                print(
-                    f"    Sample article_ids_visited format: {sample[:100] if len(sample) > 100 else sample}"
-                )
+                print(f"    Sample article_ids_visited format: {sample[:100] if len(sample) > 100 else sample}")
     except Exception as e:
         print(f"    Could not check data: {e}")
 
@@ -114,9 +112,7 @@ def load_user_article_interactions(client, limit=100000):
             raise Exception("No data in page_analytics")
     except Exception as e:
         # Fall back to session_metrics: use brand/category as article proxies (simpler and reliable)
-        print(
-            f"  Note: Using session_metrics with brand/category as article proxies..."
-        )
+        print(f"  Note: Using session_metrics with brand/category as article proxies...")
         query_brand = f"""
         SELECT 
             user_id,
@@ -209,9 +205,7 @@ def load_user_article_interactions(client, limit=100000):
         print("\n⚠ Warning: No user-article interactions found!")
         print("  This may be because:")
         print("  - page_analytics table is empty or doesn't exist")
-        print(
-            "  - article_ids_visited in session_metrics is empty or in unexpected format"
-        )
+        print("  - article_ids_visited in session_metrics is empty or in unexpected format")
         print("  - No article interactions have been recorded yet")
         return None
 
@@ -230,26 +224,18 @@ def create_user_item_matrix(df):
 
     # Create interaction score (weighted combination)
     df["interaction_score"] = (
-        df["total_views"] * 1.0
-        + df["total_clicks"] * 2.0
-        + df["avg_time_spent"] / 60.0 * 0.5  # Time in minutes
+        df["total_views"] * 1.0 + df["total_clicks"] * 2.0 + df["avg_time_spent"] / 60.0 * 0.5  # Time in minutes
     )
 
     # Create user-item matrix
-    user_item_matrix = df.pivot_table(
-        index="user_id", columns="article_id", values="interaction_score", fill_value=0
-    )
+    user_item_matrix = df.pivot_table(index="user_id", columns="article_id", values="interaction_score", fill_value=0)
 
     print(f"✓ Created user-item matrix")
     print(f"  Shape: {user_item_matrix.shape}")
 
     # Calculate sparsity safely
     if user_item_matrix.shape[0] > 0 and user_item_matrix.shape[1] > 0:
-        sparsity = (
-            (user_item_matrix == 0).sum().sum()
-            / (user_item_matrix.shape[0] * user_item_matrix.shape[1])
-            * 100
-        )
+        sparsity = (user_item_matrix == 0).sum().sum() / (user_item_matrix.shape[0] * user_item_matrix.shape[1]) * 100
         print(f"  Sparsity: {sparsity:.2f}%")
     else:
         print(f"  Sparsity: N/A (empty matrix)")
@@ -263,11 +249,7 @@ def train_collaborative_filtering(user_item_matrix, n_components=50):
     print("TRAINING COLLABORATIVE FILTERING MODEL")
     print("=" * 80)
 
-    if (
-        user_item_matrix is None
-        or user_item_matrix.shape[0] == 0
-        or user_item_matrix.shape[1] == 0
-    ):
+    if user_item_matrix is None or user_item_matrix.shape[0] == 0 or user_item_matrix.shape[1] == 0:
         print("⚠ Cannot train model: empty or invalid matrix")
         return None, None, None, None
 
@@ -299,9 +281,7 @@ def train_collaborative_filtering(user_item_matrix, n_components=50):
     return model, W, H, scaler
 
 
-def get_user_recommendations(
-    user_id, user_item_matrix, model, W, H, n_recommendations=10
-):
+def get_user_recommendations(user_id, user_item_matrix, model, W, H, n_recommendations=10):
     """Get recommendations for a user"""
     if user_id not in user_item_matrix.index:
         return []
@@ -384,16 +364,12 @@ def create_content_features(client):
         "total_interactions",
     ]
     scaler = StandardScaler()
-    df_encoded[numerical_features] = scaler.fit_transform(
-        df_encoded[numerical_features]
-    )
+    df_encoded[numerical_features] = scaler.fit_transform(df_encoded[numerical_features])
 
     return df_encoded.set_index("article_id"), scaler
 
 
-def get_content_based_recommendations(
-    user_id, user_item_matrix, content_features, n_recommendations=10
-):
+def get_content_based_recommendations(user_id, user_item_matrix, content_features, n_recommendations=10):
     """Get content-based recommendations"""
     print("\n" + "=" * 80)
     print("GETTING CONTENT-BASED RECOMMENDATIONS")
@@ -407,9 +383,7 @@ def get_content_based_recommendations(
         return []
 
     # Get content features for interacted articles
-    interacted_features = content_features.loc[
-        content_features.index.intersection(interacted_articles)
-    ]
+    interacted_features = content_features.loc[content_features.index.intersection(interacted_articles)]
 
     if len(interacted_features) == 0:
         return []
@@ -422,9 +396,7 @@ def get_content_based_recommendations(
 
     # Get unrated articles
     unrated_articles = content_features.index.difference(interacted_articles)
-    unrated_similarities = similarities[
-        content_features.index.get_indexer(unrated_articles)
-    ]
+    unrated_similarities = similarities[content_features.index.get_indexer(unrated_articles)]
 
     # Get top recommendations
     top_indices = np.argsort(unrated_similarities)[::-1][:n_recommendations]
@@ -434,9 +406,7 @@ def get_content_based_recommendations(
     return list(zip(recommendations, scores))
 
 
-def create_hybrid_recommendations(
-    user_id, collaborative_recs, content_recs, weight_collab=0.6, weight_content=0.4
-):
+def create_hybrid_recommendations(user_id, collaborative_recs, content_recs, weight_collab=0.6, weight_content=0.4):
     """Create hybrid recommendations"""
     print("\n" + "=" * 80)
     print("CREATING HYBRID RECOMMENDATIONS")
@@ -457,16 +427,12 @@ def create_hybrid_recommendations(
             all_recommendations[article_id] = score * weight_content
 
     # Sort by score
-    sorted_recommendations = sorted(
-        all_recommendations.items(), key=lambda x: x[1], reverse=True
-    )
+    sorted_recommendations = sorted(all_recommendations.items(), key=lambda x: x[1], reverse=True)
 
     return sorted_recommendations[:10]
 
 
-def evaluate_recommendations(
-    user_item_matrix, model, W, H, content_features, n_test_users=100
-):
+def evaluate_recommendations(user_item_matrix, model, W, H, content_features, n_test_users=100):
     """Evaluate recommendation system"""
     print("\n" + "=" * 80)
     print("EVALUATING RECOMMENDATION SYSTEM")
@@ -484,25 +450,17 @@ def evaluate_recommendations(
 
     for user_id in test_users:
         # Get recommendations
-        collab_recs = get_user_recommendations(
-            user_id, user_item_matrix, model, W, H, n_recommendations=10
-        )
-        content_recs = get_content_based_recommendations(
-            user_id, user_item_matrix, content_features, n_recommendations=10
-        )
+        collab_recs = get_user_recommendations(user_id, user_item_matrix, model, W, H, n_recommendations=10)
+        content_recs = get_content_based_recommendations(user_id, user_item_matrix, content_features, n_recommendations=10)
         hybrid_recs = create_hybrid_recommendations(user_id, collab_recs, content_recs)
 
         # Get actual interactions (for evaluation)
-        actual_interactions = set(
-            user_item_matrix.loc[user_id][user_item_matrix.loc[user_id] > 0].index
-        )
+        actual_interactions = set(user_item_matrix.loc[user_id][user_item_matrix.loc[user_id] > 0].index)
         recommended_articles = set([rec[0] for rec in hybrid_recs])
 
         # Calculate precision and recall (simplified)
         if len(recommended_articles) > 0:
-            precision = len(
-                recommended_articles.intersection(actual_interactions)
-            ) / len(recommended_articles)
+            precision = len(recommended_articles.intersection(actual_interactions)) / len(recommended_articles)
             recalls.append(precision)  # Simplified recall
             precisions.append(precision)
 
@@ -578,18 +536,12 @@ def main():
         # Create user-item matrix
         user_item_matrix = create_user_item_matrix(df)
 
-        if (
-            user_item_matrix is None
-            or user_item_matrix.shape[0] == 0
-            or user_item_matrix.shape[1] == 0
-        ):
+        if user_item_matrix is None or user_item_matrix.shape[0] == 0 or user_item_matrix.shape[1] == 0:
             print("\n⚠ Cannot proceed without valid user-item matrix. Exiting.")
             return
 
         # Train collaborative filtering
-        model, W, H, scaler = train_collaborative_filtering(
-            user_item_matrix, n_components=50
-        )
+        model, W, H, scaler = train_collaborative_filtering(user_item_matrix, n_components=50)
 
         if model is None:
             print("\n⚠ Cannot proceed without trained model. Exiting.")
@@ -599,9 +551,7 @@ def main():
         content_features, content_scaler = create_content_features(client)
 
         # Evaluate system
-        precision, recall = evaluate_recommendations(
-            user_item_matrix, model, W, H, content_features
-        )
+        precision, recall = evaluate_recommendations(user_item_matrix, model, W, H, content_features)
 
         # Save model
         save_recommendation_model(model, W, H, scaler, content_features, content_scaler)
@@ -614,15 +564,9 @@ def main():
         sample_user = user_item_matrix.index[0]
         print(f"\nRecommendations for User {sample_user}:")
 
-        collab_recs = get_user_recommendations(
-            sample_user, user_item_matrix, model, W, H, n_recommendations=10
-        )
-        content_recs = get_content_based_recommendations(
-            sample_user, user_item_matrix, content_features, n_recommendations=10
-        )
-        hybrid_recs = create_hybrid_recommendations(
-            sample_user, collab_recs, content_recs
-        )
+        collab_recs = get_user_recommendations(sample_user, user_item_matrix, model, W, H, n_recommendations=10)
+        content_recs = get_content_based_recommendations(sample_user, user_item_matrix, content_features, n_recommendations=10)
+        hybrid_recs = create_hybrid_recommendations(sample_user, collab_recs, content_recs)
 
         print(f"\nTop 10 Hybrid Recommendations:")
         for i, (article_id, score) in enumerate(hybrid_recs[:10], 1):

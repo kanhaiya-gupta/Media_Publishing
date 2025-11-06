@@ -32,9 +32,7 @@ from kafka import KafkaProducer
 from kafka.errors import NoBrokersAvailable
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # Configuration
@@ -150,9 +148,7 @@ class UserSession:
         self.timezone = self._get_timezone(self.country)
         self.user_segment = self._get_user_segment()
         self.articles_viewed = []
-        self.session_duration = random.randint(
-            MIN_SESSION_DURATION_SECONDS, MAX_SESSION_DURATION_SECONDS
-        )
+        self.session_duration = random.randint(MIN_SESSION_DURATION_SECONDS, MAX_SESSION_DURATION_SECONDS)
         self.current_page = None
         self.referrer = random.choice(
             [
@@ -354,12 +350,8 @@ class UserSession:
             metrics["clicked_result"] = random.choice([True, False])
 
         elif event_type == "ad_click":
-            metrics["ad_position"] = random.choice(
-                ["header", "sidebar", "in-article", "footer"]
-            )
-            metrics["ad_category"] = random.choice(
-                ["automotive", "finance", "tech", "retail"]
-            )
+            metrics["ad_position"] = random.choice(["header", "sidebar", "in-article", "footer"])
+            metrics["ad_category"] = random.choice(["automotive", "finance", "tech", "retail"])
             metrics["ad_revenue"] = round(random.uniform(0.1, 5.0), 2)
 
         return metrics
@@ -380,9 +372,7 @@ class UserSession:
         }
 
         if event_type == "newsletter_signup":
-            metadata["newsletter_type"] = random.choice(
-                ["daily_digest", "breaking_news", "weekly_summary", "topic_specific"]
-            )
+            metadata["newsletter_type"] = random.choice(["daily_digest", "breaking_news", "weekly_summary", "topic_specific"])
             metadata["email_provided"] = True
 
         if event_type == "subscription_prompt":
@@ -462,9 +452,7 @@ class UserSession:
 def check_kafka_connection(bootstrap_servers: str = KAFKA_BOOTSTRAP_SERVERS) -> bool:
     """Check if Kafka broker is available"""
     try:
-        test_producer = KafkaProducer(
-            bootstrap_servers=bootstrap_servers, request_timeout_ms=3000
-        )
+        test_producer = KafkaProducer(bootstrap_servers=bootstrap_servers, request_timeout_ms=3000)
         test_producer.close(timeout=1)
         logger.info(f"✓ Successfully connected to Kafka at {bootstrap_servers}")
         return True
@@ -475,9 +463,7 @@ def check_kafka_connection(bootstrap_servers: str = KAFKA_BOOTSTRAP_SERVERS) -> 
         print("    cd backend/kafka_check")
         print("    docker-compose up -d")
         print("\n  Option 2 - Manual:")
-        print(
-            "    1. Start Zookeeper: bin/zookeeper-server-start.sh config/zookeeper.properties"
-        )
+        print("    1. Start Zookeeper: bin/zookeeper-server-start.sh config/zookeeper.properties")
         print("    2. Start Kafka: bin/kafka-server-start.sh config/server.properties")
         return False
     except Exception as e:
@@ -529,9 +515,7 @@ def main():
             brand = random.choice(list(BRANDS.keys()))
             session = UserSession(user_id, brand)
 
-            logger.info(
-                f"\n📱 Starting session {session.session_id} for user {user_id} on {brand}"
-            )
+            logger.info(f"\n📱 Starting session {session.session_id} for user {user_id} on {brand}")
 
             # Generate events throughout the session
             while session.is_session_active():
@@ -549,9 +533,7 @@ def main():
                     elapsed = time.time() - start_time
                     rate = total_events / elapsed if elapsed > 0 else 0
                     logger.info(
-                        f"📊 Stats: {total_events:,} events | "
-                        f"{total_sessions:,} sessions | "
-                        f"{rate:.1f} events/sec"
+                        f"📊 Stats: {total_events:,} events | " f"{total_sessions:,} sessions | " f"{rate:.1f} events/sec"
                     )
 
                 # Sleep to simulate realistic event rate

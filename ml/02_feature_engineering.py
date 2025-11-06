@@ -113,9 +113,7 @@ def extract_user_features(client, limit=10000):
             return pd.DataFrame(columns=columns)
 
         # Check unique users count
-        user_count_query = (
-            "SELECT uniqExact(user_id) as unique_users FROM session_metrics"
-        )
+        user_count_query = "SELECT uniqExact(user_id) as unique_users FROM session_metrics"
         user_count_result = client.execute(user_count_query)
         unique_users = user_count_result[0][0] if user_count_result else 0
         print(f"  Found {unique_users:,} unique users")
@@ -228,9 +226,7 @@ def extract_user_features(client, limit=10000):
         print(f"✓ Query completed in {elapsed:.1f} seconds ({elapsed/60:.1f} minutes)")
     except Exception as e:
         elapsed = time.time() - start_time
-        print(
-            f"✗ Query failed after {elapsed:.1f} seconds ({elapsed/60:.1f} minutes): {e}"
-        )
+        print(f"✗ Query failed after {elapsed:.1f} seconds ({elapsed/60:.1f} minutes): {e}")
         print(f"  Error type: {type(e).__name__}")
         raise
 
@@ -287,26 +283,21 @@ def create_conversion_labels(df):
 
     # High-value conversion: Multiple signups or high engagement
     df["high_value_conversion"] = (
-        (df["total_newsletter_signups"] > 1)
-        | (df["avg_engagement_score"] > df["avg_engagement_score"].quantile(0.75))
+        (df["total_newsletter_signups"] > 1) | (df["avg_engagement_score"] > df["avg_engagement_score"].quantile(0.75))
     ).astype(int)
 
     conversion_counts = df["converted"].value_counts()
     conversion_rate = df["converted"].mean() * 100
 
     print(f"\nConversion Distribution:")
-    print(
-        f"  Non-Converted (0): {conversion_counts.get(0, 0):,} ({100-conversion_rate:.2f}%)"
-    )
+    print(f"  Non-Converted (0): {conversion_counts.get(0, 0):,} ({100-conversion_rate:.2f}%)")
     print(f"  Converted (1): {conversion_counts.get(1, 0):,} ({conversion_rate:.2f}%)")
 
     high_value_counts = df["high_value_conversion"].value_counts()
     high_value_rate = df["high_value_conversion"].mean() * 100
 
     print(f"\nHigh-Value Conversion Distribution:")
-    print(
-        f"  Non-High-Value (0): {high_value_counts.get(0, 0):,} ({100-high_value_rate:.2f}%)"
-    )
+    print(f"  Non-High-Value (0): {high_value_counts.get(0, 0):,} ({100-high_value_rate:.2f}%)")
     print(f"  High-Value (1): {high_value_counts.get(1, 0):,} ({high_value_rate:.2f}%)")
 
     return df
@@ -326,9 +317,7 @@ def encode_categorical_features(df):
     df["brand_sport_bild_ratio"] = df["sport_bild_sessions"] / df["total_sessions"]
 
     # One-hot encode subscription tier
-    subscription_dummies = pd.get_dummies(
-        df["current_subscription_tier"], prefix="subscription"
-    )
+    subscription_dummies = pd.get_dummies(df["current_subscription_tier"], prefix="subscription")
     df = pd.concat([df, subscription_dummies], axis=1)
 
     # One-hot encode user segment
@@ -341,9 +330,7 @@ def encode_categorical_features(df):
 
     # One-hot encode country (top 10)
     top_countries = df["primary_country"].value_counts().head(10).index
-    df["primary_country_encoded"] = df["primary_country"].apply(
-        lambda x: x if x in top_countries else "other"
-    )
+    df["primary_country_encoded"] = df["primary_country"].apply(lambda x: x if x in top_countries else "other")
     country_dummies = pd.get_dummies(df["primary_country_encoded"], prefix="country")
     df = pd.concat([df, country_dummies], axis=1)
 
@@ -360,15 +347,11 @@ def create_derived_features(df):
     print("=" * 80)
 
     # Session frequency
-    df["session_frequency"] = df["total_sessions"] / (
-        df["days_active"] + 1
-    )  # Avoid division by zero
+    df["session_frequency"] = df["total_sessions"] / (df["days_active"] + 1)  # Avoid division by zero
 
     # Engagement trends
     df["engagement_per_session"] = df["avg_engagement_score"]
-    df["engagement_per_minute"] = df["avg_engagement_score"] / (
-        df["avg_session_duration"] / 60 + 1
-    )
+    df["engagement_per_minute"] = df["avg_engagement_score"] / (df["avg_session_duration"] / 60 + 1)
 
     # Content preference scores
     df["content_diversity_score"] = df["avg_categories_diversity"]
@@ -458,29 +441,17 @@ def prepare_ml_features(df):
     device_cols = [col for col in df.columns if col.startswith("device_")]
     country_cols = [col for col in df.columns if col.startswith("country_")]
 
-    all_features = (
-        numerical_features
-        + subscription_cols
-        + segment_cols
-        + device_cols
-        + country_cols
-    )
+    all_features = numerical_features + subscription_cols + segment_cols + device_cols + country_cols
 
     # Check which features exist
     available_features = [f for f in all_features if f in df.columns]
 
     print(f"\nSelected Features: {len(available_features)}")
     print(f"  Numerical: {len(numerical_features)}")
-    print(
-        f"  Categorical (one-hot): {len(subscription_cols + segment_cols + device_cols + country_cols)}"
-    )
+    print(f"  Categorical (one-hot): {len(subscription_cols + segment_cols + device_cols + country_cols)}")
 
     # Create feature DataFrame
-    feature_df = df[
-        ["user_id"]
-        + available_features
-        + ["churned", "converted", "high_value_conversion"]
-    ].copy()
+    feature_df = df[["user_id"] + available_features + ["churned", "converted", "high_value_conversion"]].copy()
 
     # Fill any remaining NaN values
     feature_df = feature_df.fillna(0)

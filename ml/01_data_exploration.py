@@ -72,9 +72,7 @@ def get_data_summary(client):
     print(f"Date Range: {date_range[0]} to {date_range[1]}")
 
     # Unique users
-    unique_users = client.execute(
-        "SELECT count(DISTINCT user_id) FROM session_metrics"
-    )[0][0]
+    unique_users = client.execute("SELECT count(DISTINCT user_id) FROM session_metrics")[0][0]
     print(f"Unique Users: {unique_users:,}")
 
     # Brands distribution
@@ -287,9 +285,7 @@ def analyze_feature_correlations(df):
         for j in range(i + 1, len(corr_matrix.columns)):
             corr = corr_matrix.iloc[i, j]
             if abs(corr) > 0.5:
-                print(
-                    f"  {corr_matrix.columns[i]} <-> {corr_matrix.columns[j]}: {corr:.3f}"
-                )
+                print(f"  {corr_matrix.columns[i]} <-> {corr_matrix.columns[j]}: {corr:.3f}")
 
     # Save correlation matrix (relative to script directory)
     plt.figure(figsize=(12, 10))
@@ -362,11 +358,7 @@ def identify_target_variables(client):
     """
     )[0]
 
-    conversion_rate = (
-        conversion_stats[1] / conversion_stats[0] * 100
-        if conversion_stats[0] > 0
-        else 0
-    )
+    conversion_rate = conversion_stats[1] / conversion_stats[0] * 100 if conversion_stats[0] > 0 else 0
 
     print(f"\nConversion Analysis:")
     print(f"  Total Users: {conversion_stats[0]:,}")

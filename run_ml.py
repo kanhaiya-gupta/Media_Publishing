@@ -241,9 +241,7 @@ def run_script(script_info, skip_exploration=False, skip_features=False):
                     missing_outputs.append(output)
 
             if missing_outputs:
-                print(
-                    f"  ⚠️  Warning: Some expected outputs not found: {', '.join(missing_outputs)}"
-                )
+                print(f"  ⚠️  Warning: Some expected outputs not found: {', '.join(missing_outputs)}")
                 # Show output to help debug
                 if result.stdout:
                     print(f"  Script output:\n{result.stdout}")
@@ -374,10 +372,7 @@ def run_all_models(skip_exploration=False, skip_features=False, models_only=Fals
     if successful_steps > 0:
         print(f"\n✅ Successfully completed steps:")
         for i, script_info in enumerate(scripts_to_run):
-            if (
-                script_info["name"] not in failed_steps
-                and script_info["name"] not in skipped_steps
-            ):
+            if script_info["name"] not in failed_steps and script_info["name"] not in skipped_steps:
                 print(f"   ✓ {script_info['name']}")
 
     if skipped_steps:
@@ -424,13 +419,9 @@ Examples:
         """,
     )
 
-    parser.add_argument(
-        "--skip-exploration", action="store_true", help="Skip data exploration step"
-    )
+    parser.add_argument("--skip-exploration", action="store_true", help="Skip data exploration step")
 
-    parser.add_argument(
-        "--skip-features", action="store_true", help="Skip feature engineering step"
-    )
+    parser.add_argument("--skip-features", action="store_true", help="Skip feature engineering step")
 
     parser.add_argument(
         "--models-only",
@@ -438,9 +429,7 @@ Examples:
         help="Run only model training (skip exploration and features)",
     )
 
-    parser.add_argument(
-        "--skip-prerequisites", action="store_true", help="Skip prerequisite checks"
-    )
+    parser.add_argument("--skip-prerequisites", action="store_true", help="Skip prerequisite checks")
 
     args = parser.parse_args()
 
