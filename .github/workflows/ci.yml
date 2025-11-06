@@ -262,3 +262,65 @@ jobs:
           echo "  - Azure Synapse"
           echo "  - GCP Dataproc"
 
+  release:
+    name: Create Release
+    needs: [lint-and-format, unit-tests, integration-tests, ml-pipeline-test, docker-build, security-scan, code-quality]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate version tag
+        id: version
+        run: |
+          # Generate version from date and commit short SHA
+          VERSION=$(date +'%Y.%m.%d')-$(git rev-parse --short HEAD)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated version: $VERSION"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.version }}
+          body: |
+            ## 🚀 Media Publishing Analytics Pipeline Release
+
+            **Version:** ${{ steps.version.outputs.version }}
+            **Commit:** ${{ github.sha }}
+
+            ### ✅ What's Included
+
+            - ✅ All CI checks passed
+            - ✅ Code quality validated
+            - ✅ Security scan completed
+            - ✅ ML pipeline tested
+            - ✅ Docker build successful
+
+            ### 📦 Components
+
+            - **Kafka Producer**: Real-time event generation
+            - **Spark Streaming**: Real-time data processing
+            - **MinIO**: Data lake storage (Delta Lake)
+            - **ClickHouse**: Analytics database
+            - **ML Pipeline**: Complete machine learning models
+
+            ### 🔗 Links
+
+            - [Documentation](./docs/README.md)
+            - [Setup Guide](./docs/setup.md)
+            - [Architecture](./docs/architecture.md)
+
+            ### 📝 Changes
+
+            See commit history for detailed changes.
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+
