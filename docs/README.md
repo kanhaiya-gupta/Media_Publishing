@@ -16,17 +16,19 @@ graph TB
     A --> I[Data Model]
     A --> J[ML Models]
     A --> K[ML Pipeline]
+    A --> L[Data Governance]
     
-    B --> K[Quick Start]
-    C --> L[System Design]
-    D --> M[Processing Flow]
-    E --> N[Installation]
-    F --> O[Component Details]
-    G --> P[Schemas & APIs]
-    H --> Q[Production Deployment]
-    I --> R[ML Features]
-    J --> S[Model Recommendations]
-    K --> T[ML Pipeline Guide]
+    B --> M[Quick Start]
+    C --> N[System Design]
+    D --> O[Processing Flow]
+    E --> P[Installation]
+    F --> Q[Component Details]
+    G --> R[Schemas & APIs]
+    H --> S[Production Deployment]
+    I --> T[ML Features]
+    J --> U[Model Recommendations]
+    K --> V[ML Pipeline Guide]
+    L --> W[Privacy & Compliance]
     
     style A fill:#e1f5ff
 ```
@@ -139,6 +141,17 @@ Complete ML pipeline documentation including:
 - Quick reference commands
 
 **Use this when**: Implementing ML models, understanding the ML workflow, or troubleshooting ML issues.
+
+### [Data Governance](./data-governance.md)
+Comprehensive data governance framework including:
+- Privacy & compliance (GDPR)
+- Data quality framework
+- Access control (RBAC)
+- Data lifecycle management
+- Audit & monitoring
+- Compliance reporting
+
+**Use this when**: Understanding data governance policies, compliance requirements, privacy controls, or implementing data governance practices.
 
 ## 🚀 Quick Navigation
 

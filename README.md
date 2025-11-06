@@ -109,8 +109,16 @@ make ci-test
 make ci-lint
 make ci-format-check
 
+# Run ML pipeline
+make ml-pipeline
+# Or directly:
+python run_ml.py
+
 # Health checks
 make health-check
+
+# Validate workflows locally
+make validate-workflows
 ```
 
 ### CI/CD Documentation
@@ -126,11 +134,12 @@ make health-check
 - **[Architecture](./docs/architecture.md)** - System architecture and design
 - **[Data Flow](./docs/data-flow.md)** - Detailed data flow diagrams
 - **[Setup Guide](./docs/setup.md)** - Step-by-step setup instructions
-- **[Components](./docs/components.md)** - Component details and configurations
+- **[Components](./docs/components.md)** - Component details, configurations, and performance benchmarks
 - **[API Reference](./docs/api-reference.md)** - Schema and API documentation
 - **[CI/CD Guide](./docs/cicd.md)** - CI/CD pipeline and workflows
 - **[Data Model](./docs/data-model.md)** - ML-ready data model and feature extraction
 - **[ML Models](./docs/ml-models.md)** - ML model recommendations and architectures
+- **[Data Governance](./docs/data-governance.md)** - Privacy, compliance, and data governance framework
 
 ## 🏢 Brands Supported
 
