@@ -1,0 +1,59 @@
+name: Data Quality Checks
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  data-quality:
+    name: Data Quality Validation
+    runs-on: ubuntu-latest
+    services:
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        ports:
+          - "8123:8123"
+          - "9000:9000"
+        environment:
+          CLICKHOUSE_DB: analytics
+          CLICKHOUSE_USER: default
+          CLICKHOUSE_PASSWORD: clickhouse
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install clickhouse-driver pandas great-expectations
+
+      - name: Run data quality checks
+        run: |
+          python -c "
+          from clickhouse_driver import Client
+          import pandas as pd
+          
+          client = Client(host='localhost', port=8123, database='analytics', 
+                         user='default', password='clickhouse')
+          
+          # Check data freshness
+          result = client.execute('SELECT max(session_start) FROM session_metrics')
+          print(f'Latest session: {result[0][0]}')
+          
+          # Check data completeness
+          result = client.execute('SELECT count() FROM session_metrics WHERE user_id = 0')
+          print(f'Null user_id count: {result[0][0]}')
+          
+          # Check data volume
+          result = client.execute('SELECT count() FROM session_metrics')
+          print(f'Total sessions: {result[0][0]}')
+          "
+

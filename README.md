@@ -49,6 +49,10 @@ sequenceDiagram
 - Python 3.8+
 - Java 11+ (for Spark)
 
+### GitHub Authentication
+
+If you encounter authentication errors when pushing to GitHub, see **[GitHub Authentication Guide](./GITHUB_AUTH.md)** for instructions on setting up a Personal Access Token (PAT).
+
 ### Installation
 
 ```bash

@@ -1,0 +1,76 @@
+[flake8]
+# Maximum line length
+max-line-length = 127
+
+# Exclude directories and files
+exclude =
+    .git,
+    __pycache__,
+    .pytest_cache,
+    htmlcov,
+    .coverage,
+    coverage.xml,
+    *.pyc,
+    *.pyo,
+    *.egg-info,
+    .venv,
+    venv,
+    env,
+    ml/,
+    scripts/,
+    tests/,
+    docs/,
+    .github/
+
+# Ignore specific error codes
+# W291: trailing whitespace (handled by formatters)
+# W293: blank line contains whitespace (handled by formatters)
+# W391: blank line at end of file (handled by formatters)
+# F541: f-string is missing placeholders (acceptable for consistency)
+# E501: line too long (handled by max-line-length)
+# E302: expected 2 blank lines (handled by formatters)
+# E305: expected 2 blank lines after class/function (handled by formatters)
+# F401: imported but unused (can be false positives)
+# F811: redefinition of unused (can be acceptable in some cases)
+# F841: local variable assigned but never used (can be acceptable)
+# C901: too complex (acceptable for some functions)
+# E231: missing whitespace after ',' (handled by formatters)
+# E122, E127, E128: continuation line issues (handled by formatters)
+# E226: missing whitespace around arithmetic operator (style preference, handled by formatters)
+# W503: line break before binary operator (Black's preferred style)
+ignore =
+    W291,
+    W293,
+    W391,
+    W503,
+    F541,
+    E302,
+    E305,
+    F401,
+    F811,
+    F841,
+    C901,
+    E231,
+    E122,
+    E127,
+    E128,
+    E226
+
+# Per-file ignores
+per-file-ignores =
+    # ML scripts can have more relaxed rules
+    ml/*.py:E501,W503
+    # Test files can have unused imports
+    tests/*.py:F401,F811
+    # Scripts can have more relaxed rules
+    scripts/*.py:E501,W503
+
+# Maximum complexity
+max-complexity = 15
+
+# Show source
+show-source = True
+
+# Statistics
+statistics = True
+

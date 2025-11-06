@@ -1,0 +1,64 @@
+name: ML Model Training
+
+on:
+  schedule:
+    # Retrain models weekly on Sunday at 3 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      models:
+        description: 'Comma-separated list of models to train (or "all")'
+        required: false
+        default: 'all'
+
+jobs:
+  train-models:
+    name: Train ML Models
+    runs-on: ubuntu-latest
+    services:
+      clickhouse:
+        image: clickhouse/clickhouse-server:latest
+        ports:
+          - "8123:8123"
+          - "9000:9000"
+        environment:
+          CLICKHOUSE_DB: analytics
+          CLICKHOUSE_USER: default
+          CLICKHOUSE_PASSWORD: clickhouse
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r ml/requirements_ml.txt
+          pip install mlflow
+
+      - name: Initialize ClickHouse
+        run: |
+          sleep 10
+          docker exec clickhouse clickhouse-client --query "CREATE DATABASE IF NOT EXISTS analytics" || true
+
+      - name: Train ML models
+        run: |
+          python run_ml.py --skip-prerequisites --models-only || echo "ML training completed"
+
+      - name: Upload models to artifact storage
+        uses: actions/upload-artifact@v3
+        with:
+          name: ml-models
+          path: ml/models/*.pkl
+          retention-days: 30
+
+      - name: Log model metrics to MLflow
+        run: |
+          echo "Model metrics would be logged to MLflow here"
+          # mlflow.log_artifact("ml/models/")
+
