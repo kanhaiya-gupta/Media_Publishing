@@ -26,9 +26,14 @@ from pyspark.sql.functions import (
 )
 from pyspark.sql.functions import max as spark_max
 from pyspark.sql.functions import min as spark_min
-from pyspark.sql.functions import struct
+from pyspark.sql.functions import (
+    struct,
+)
 from pyspark.sql.functions import sum as spark_sum
-from pyspark.sql.functions import to_json, when
+from pyspark.sql.functions import (
+    to_json,
+    when,
+)
 from pyspark.sql.types import (
     ArrayType,
     IntegerType,
@@ -88,12 +93,8 @@ schema = StructType(
         StructField("timezone", StringType(), True),
         StructField("subscription_tier", StringType(), True),
         StructField("user_segment", StringType(), True),
-        StructField(
-            "engagement_metrics", MapType(StringType(), StringType()), True
-        ),  # JSON-like structure
-        StructField(
-            "metadata", MapType(StringType(), StringType()), True
-        ),  # JSON-like structure
+        StructField("engagement_metrics", MapType(StringType(), StringType()), True),  # JSON-like structure
+        StructField("metadata", MapType(StringType(), StringType()), True),  # JSON-like structure
     ]
 )
 
@@ -139,9 +140,7 @@ session_metrics = (
         count(when(col("event_type") == "article_view", 1)).alias("article_views"),
         count(when(col("event_type") == "article_click", 1)).alias("article_clicks"),
         count(when(col("event_type") == "video_play", 1)).alias("video_plays"),
-        count(when(col("event_type") == "newsletter_signup", 1)).alias(
-            "newsletter_signups"
-        ),
+        count(when(col("event_type") == "newsletter_signup", 1)).alias("newsletter_signups"),
         count(when(col("event_type") == "ad_click", 1)).alias("ad_clicks"),
         count(when(col("event_type") == "search", 1)).alias("searches"),
         # Page tracking
@@ -164,9 +163,7 @@ session_metrics = (
     .withColumn("session_duration_sec", expr("session_end - session_start"))
     .withColumn("pages_visited_count", expr("size(article_ids_visited)"))
     .withColumn("unique_pages_count", expr("size(array_distinct(article_ids_visited))"))
-    .withColumn(
-        "unique_categories_count", expr("size(array_distinct(categories_visited))")
-    )
+    .withColumn("unique_categories_count", expr("size(array_distinct(categories_visited))"))
 )
 
 # Transform data for ML Analytics and ClickHouse
@@ -238,9 +235,7 @@ def write_to_storage_and_analytics(batch_df, batch_id):
         try:
             output_path = f"{MINIO_BUCKET}/sessions/batch_{batch_id}"
             batch_df_with_id.write.mode("overwrite").format("delta").save(output_path)
-            print(
-                f"✓ Saved to MinIO (Delta Lake): {output_path} ({record_count} sessions)"
-            )
+            print(f"✓ Saved to MinIO (Delta Lake): {output_path} ({record_count} sessions)")
         except Exception as e:
             print(f"✗ Error writing to MinIO: {e}")
             if "NoSuchBucket" in str(e):
@@ -272,12 +267,8 @@ def write_to_storage_and_analytics(batch_df, batch_id):
 
                 for row in rows:
                     # Convert string timestamps to datetime objects for ClickHouse
-                    session_start_dt = datetime.strptime(
-                        str(row.session_start), "%Y-%m-%d %H:%M:%S"
-                    )
-                    session_end_dt = datetime.strptime(
-                        str(row.session_end), "%Y-%m-%d %H:%M:%S"
-                    )
+                    session_start_dt = datetime.strptime(str(row.session_start), "%Y-%m-%d %H:%M:%S")
+                    session_end_dt = datetime.strptime(str(row.session_end), "%Y-%m-%d %H:%M:%S")
 
                     data_to_insert.append(
                         (
@@ -382,9 +373,7 @@ print("=" * 80)
 print("Spark Streaming started!")
 print(f"Data Lake (MinIO/Delta Lake): s3a://session-metrics")
 print(f"MinIO Console: http://localhost:9001 (minioadmin/minioadmin)")
-print(
-    f"ClickHouse Analytics: {CLICKHOUSE_HOST}:{CLICKHOUSE_PORT}/{CLICKHOUSE_DATABASE}"
-)
+print(f"ClickHouse Analytics: {CLICKHOUSE_HOST}:{CLICKHOUSE_PORT}/{CLICKHOUSE_DATABASE}")
 print("=" * 80)
 print("Pipeline: Kafka → Spark Streaming → MinIO (Delta Lake) + ClickHouse (Analytics)")
 print("=" * 80)

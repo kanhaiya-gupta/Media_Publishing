@@ -87,9 +87,7 @@ def prepare_data(df, feature_list):
     print(f"  Churned (1): {(y == 1).sum():,} ({(y == 1).mean()*100:.2f}%)")
 
     # Split data
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
     print(f"\nTrain/Test Split:")
     print(f"  Training: {len(X_train):,} samples")
@@ -185,9 +183,7 @@ def evaluate_model(model, X_test, y_test, feature_list):
     # Feature importance
     print(f"\nTop 20 Most Important Features:")
     feature_importance = model.get_score(importance_type="gain")
-    sorted_features = sorted(
-        feature_importance.items(), key=lambda x: x[1], reverse=True
-    )
+    sorted_features = sorted(feature_importance.items(), key=lambda x: x[1], reverse=True)
     for i, (feature, importance) in enumerate(sorted_features[:20], 1):
         print(f"  {i:2d}. {feature:40s}: {importance:10.2f}")
 

@@ -85,9 +85,7 @@ def prepare_data(df, feature_list, target="churned"):
     print(f"  Class 1: {(y == 1).sum():,} ({(y == 1).mean()*100:.2f}%)")
 
     # Split data
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
     print(f"\nTrain/Test Split:")
     print(f"  Training: {len(X_train):,} samples")
@@ -108,9 +106,7 @@ def train_logistic_regression(X_train, y_train, X_test, y_test):
     X_test_scaled = scaler.transform(X_test)
 
     # Train model
-    model = LogisticRegression(
-        max_iter=1000, random_state=42, class_weight="balanced", solver="lbfgs"
-    )
+    model = LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced", solver="lbfgs")
 
     print("\nTraining model...")
     model.fit(X_train_scaled, y_train)
@@ -177,9 +173,9 @@ def train_random_forest(X_train, y_train, X_test, y_test):
     print(f"  AUC-ROC: {metrics['auc']:.4f}")
 
     # Feature importance
-    feature_importance = pd.DataFrame(
-        {"feature": X_train.columns, "importance": model.feature_importances_}
-    ).sort_values("importance", ascending=False)
+    feature_importance = pd.DataFrame({"feature": X_train.columns, "importance": model.feature_importances_}).sort_values(
+        "importance", ascending=False
+    )
 
     print(f"\nTop 10 Feature Importance:")
     for i, row in feature_importance.head(10).iterrows():
@@ -338,31 +334,23 @@ def main():
 
     try:
         # Prepare data
-        X_train, X_test, y_train, y_test = prepare_data(
-            df, feature_list, target="churned"
-        )
+        X_train, X_test, y_train, y_test = prepare_data(df, feature_list, target="churned")
 
         models_dict = {}
         metrics_dict = {}
 
         # Train Logistic Regression
-        lr_model, lr_scaler, lr_metrics = train_logistic_regression(
-            X_train, y_train, X_test, y_test
-        )
+        lr_model, lr_scaler, lr_metrics = train_logistic_regression(X_train, y_train, X_test, y_test)
         models_dict["logistic_regression"] = (lr_model, lr_scaler)
         metrics_dict["logistic_regression"] = lr_metrics
 
         # Train Random Forest
-        rf_model, rf_metrics, rf_importance = train_random_forest(
-            X_train, y_train, X_test, y_test
-        )
+        rf_model, rf_metrics, rf_importance = train_random_forest(X_train, y_train, X_test, y_test)
         models_dict["random_forest"] = rf_model
         metrics_dict["random_forest"] = rf_metrics
 
         # Train Neural Network
-        nn_model, nn_scaler, nn_metrics = train_neural_network(
-            X_train, y_train, X_test, y_test
-        )
+        nn_model, nn_scaler, nn_metrics = train_neural_network(X_train, y_train, X_test, y_test)
         models_dict["neural_network"] = (nn_model, nn_scaler)
         metrics_dict["neural_network"] = nn_metrics
 

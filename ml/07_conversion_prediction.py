@@ -83,9 +83,7 @@ def prepare_data(df, feature_list):
     print(f"  Converted (1): {(y == 1).sum():,} ({(y == 1).mean()*100:.2f}%)")
 
     # Split data
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
     print(f"\nTrain/Test Split:")
     print(f"  Training: {len(X_train):,} samples")
@@ -178,15 +176,13 @@ def evaluate_model(model, X_test, y_test, feature_list):
 
     # Classification report
     print(f"\nClassification Report:")
-    print(
-        classification_report(y_test, y_pred, target_names=["Non-Convert", "Convert"])
-    )
+    print(classification_report(y_test, y_pred, target_names=["Non-Convert", "Convert"]))
 
     # Feature importance
     feature_importance = model.feature_importance(importance_type="gain")
-    feature_importance_df = pd.DataFrame(
-        {"feature": feature_list, "importance": feature_importance}
-    ).sort_values("importance", ascending=False)
+    feature_importance_df = pd.DataFrame({"feature": feature_list, "importance": feature_importance}).sort_values(
+        "importance", ascending=False
+    )
 
     print(f"\nTop 20 Most Important Features:")
     for i, row in feature_importance_df.head(20).iterrows():
@@ -249,9 +245,7 @@ def predict_conversion_probability(model, feature_list, sample_users=None):
     print(f"{'User ID':<10} {'Conversion Probability':<25} {'Risk Level':<15}")
     print("-" * 55)
 
-    for i, (user_id, proba) in enumerate(
-        zip(sample_users["user_id"], conversion_proba)
-    ):
+    for i, (user_id, proba) in enumerate(zip(sample_users["user_id"], conversion_proba)):
         if proba < 0.3:
             risk = "Low"
         elif proba < 0.7:
