@@ -1,2 +1,4 @@
-# Test package for Media Publishing Analytics Platform
+"""
+Tests for OwnLens Media Publishing Platform
+"""
 

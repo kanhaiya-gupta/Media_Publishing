@@ -41,6 +41,115 @@ sequenceDiagram
     Spark->>Spark: Next Batch (10s)
 ```
 
+## 🏗️ Complete Architecture Workflow
+
+```mermaid
+graph TB
+
+    subgraph "📊 Data Sources"
+        USER_EVENTS[User Events<br/>👤 Real-time]
+        CONTENT_EVENTS[Content Events<br/>📰 Real-time]
+        SESSION_EVENTS[Session Events<br/>🔄 Real-time]
+        SECURITY_EVENTS[Security Events<br/>🔒 Real-time]
+        COMPLIANCE_EVENTS[Compliance Events<br/>⚖️ Real-time]
+        POSTGRES_SOURCE[(PostgreSQL<br/>🗄️ Operational Data)]
+        MEDIA_FILES[Media Files<br/>📸 Batch/Stream]
+    end
+
+    subgraph "⚙️ Processing Layer"
+        KAFKA[Kafka Streaming<br/>📡 Event Ingestion]
+        SPARK_STREAMING[Spark Structured Streaming<br/>⚡ Real-time Processing]
+        SPARK_BATCH[Spark Batch Processing<br/>🔄 ETL Transformations]
+        AIRFLOW[Airflow Orchestration<br/>📅 Workflow Scheduling]
+        DBT[DBT Transformations<br/>🔄 Data Modeling]
+    end
+
+    subgraph "💾 Data Storage"
+        POSTGRES[(PostgreSQL<br/>🗄️ Operational DB)]
+        CLICKHOUSE[(ClickHouse<br/>📊 OLAP Data Warehouse)]
+        DELTA_LAKE[Delta Lake on MinIO/S3<br/>📦 Data Lake]
+        MINIO[(MinIO/S3<br/>☁️ Object Storage)]
+    end
+
+    subgraph "☁️ Cloud Analytics"
+        DATABRICKS[Databricks<br/>🔷 Cloud Analytics]
+        SNOWFLAKE[(Snowflake<br/>❄️ Cloud Data Warehouse)]
+    end
+
+    subgraph "🤖 ML & Analytics"
+        ML_TRAINING[ML Model Training<br/>🧠 Churn, Segmentation, Recommendations]
+        ML_INFERENCE[ML Inference<br/>🔮 Real-time Predictions]
+        REAL_TIME_ANALYTICS[Real-time Analytics<br/>📊 User Behavior]
+        BUSINESS_INTELLIGENCE[Business Intelligence<br/>📈 Dashboards & Reports]
+        EDITORIAL_ANALYTICS[Editorial Analytics<br/>✍️ Content Performance]
+    end
+
+    %% Data Flow - Sources to Processing
+    USER_EVENTS --> KAFKA
+    CONTENT_EVENTS --> KAFKA
+    SESSION_EVENTS --> KAFKA
+    SECURITY_EVENTS --> KAFKA
+    COMPLIANCE_EVENTS --> KAFKA
+    MEDIA_FILES --> MINIO
+    
+    KAFKA --> SPARK_STREAMING
+    POSTGRES_SOURCE --> SPARK_BATCH
+    MINIO --> SPARK_BATCH
+    
+    %% Processing to Storage
+    SPARK_STREAMING --> DELTA_LAKE
+    SPARK_STREAMING --> CLICKHOUSE
+    SPARK_BATCH --> POSTGRES
+    SPARK_BATCH --> CLICKHOUSE
+    SPARK_BATCH --> DELTA_LAKE
+    SPARK_BATCH --> MINIO
+    
+    %% Airflow Orchestration
+    AIRFLOW --> SPARK_BATCH
+    AIRFLOW --> ML_TRAINING
+    DBT --> CLICKHOUSE
+    
+    %% Storage to Cloud
+    DELTA_LAKE --> DATABRICKS
+    CLICKHOUSE --> SNOWFLAKE
+    
+    %% Storage to ML & Analytics
+    CLICKHOUSE -->|ML Features| ML_TRAINING
+    CLICKHOUSE -->|Real-time Queries| ML_INFERENCE
+    CLICKHOUSE -->|Analytics Queries| REAL_TIME_ANALYTICS
+    CLICKHOUSE -->|Aggregated Data| BUSINESS_INTELLIGENCE
+    CLICKHOUSE -->|Content Metrics| EDITORIAL_ANALYTICS
+    
+    POSTGRES -->|Operational Queries| REAL_TIME_ANALYTICS
+    POSTGRES -->|User Data| BUSINESS_INTELLIGENCE
+    
+    DATABRICKS -->|Advanced Analytics| BUSINESS_INTELLIGENCE
+    SNOWFLAKE -->|Cloud Analytics| BUSINESS_INTELLIGENCE
+    
+    ML_TRAINING --> ML_INFERENCE
+    
+    %% Styling
+    classDef dataSource fill:#e1f5ff,stroke:#01579b,stroke-width:2px,color:#000
+    classDef processing fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+    classDef storage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef cloud fill:#e0f2f1,stroke:#004d40,stroke-width:2px,color:#000
+    classDef mlAnalytics fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+
+    class USER_EVENTS,CONTENT_EVENTS,SESSION_EVENTS,SECURITY_EVENTS,COMPLIANCE_EVENTS,POSTGRES_SOURCE,MEDIA_FILES dataSource
+    class KAFKA,SPARK_STREAMING,SPARK_BATCH,AIRFLOW,DBT processing
+    class POSTGRES,CLICKHOUSE,DELTA_LAKE,MINIO storage
+    class DATABRICKS,SNOWFLAKE cloud
+    class ML_TRAINING,ML_INFERENCE,REAL_TIME_ANALYTICS,BUSINESS_INTELLIGENCE,EDITORIAL_ANALYTICS mlAnalytics
+```
+
+**Key Data Flows:**
+
+1. **Real-time Streaming**: User/Content/Session events → Kafka → Spark Streaming → Delta Lake/ClickHouse → Real-time Analytics
+2. **Batch ETL**: PostgreSQL/S3 → Spark Batch → ClickHouse/PostgreSQL → Business Intelligence  
+3. **ML Pipeline**: ClickHouse → ML Training → Model Registry → ML Inference → Real-time Predictions
+4. **Cloud Analytics**: Delta Lake → Databricks / ClickHouse → Snowflake → Advanced Analytics
+5. **Orchestration**: Airflow schedules and coordinates all workflows (ETL, ML training, data quality checks)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
