@@ -6,45 +6,6 @@ Enterprise-grade real-time analytics pipeline for processing user events across 
 
 ```mermaid
 graph TB
-    A[Kafka Producer] -->|Events| B[Kafka Topic<br/>web_clicks]
-    B -->|Stream| C[Spark Streaming]
-    C -->|Delta Lake| D[MinIO<br/>Data Lake]
-    C -->|Analytics| E[ClickHouse<br/>OLAP Database]
-    D -->|Query| F[Data Analytics]
-    E -->|Query| G[ML Features]
-    E -->|Query| H[Business Intelligence]
-    
-    style A fill:#e1f5ff
-    style B fill:#fff4e1
-    style C fill:#e8f5e9
-    style D fill:#f3e5f5
-    style E fill:#e0f2f1
-```
-
-## 📊 Data Flow
-
-```mermaid
-sequenceDiagram
-    participant User as User Session
-    participant Producer as Kafka Producer
-    participant Kafka as Kafka Topic
-    participant Spark as Spark Streaming
-    participant MinIO as MinIO (Delta Lake)
-    participant CH as ClickHouse
-    
-    User->>Producer: Generate Events
-    Producer->>Kafka: Publish Events (Snappy)
-    Kafka->>Spark: Stream Events
-    Spark->>Spark: Aggregate Sessions
-    Spark->>MinIO: Write Delta Lake
-    Spark->>CH: Write Analytics
-    Spark->>Spark: Next Batch (10s)
-```
-
-## 🏗️ Complete Architecture Workflow
-
-```mermaid
-graph TB
 
     subgraph "📊 Data Sources"
         USER_EVENTS[User Events<br/>👤 Real-time]
